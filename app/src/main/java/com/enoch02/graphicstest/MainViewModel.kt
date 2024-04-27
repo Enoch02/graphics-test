@@ -41,7 +41,34 @@ class MainViewModel : ViewModel() {
 
         pixels.value = temp
     }
-}
+
+    fun changePixel(x: Int, y: Int, color: Color) {
+        val temp = pixels.value.clone()
+
+        temp[x][y].color = color
+
+        pixels.value = temp
+    }
+
+    fun changeColumn(index: Int, color: Color) {
+        val temp = pixels.value.clone()
+
+        temp[index].forEach { pixel ->
+            pixel.color = color
+        }
+
+        pixels.value = temp
+    }
+
+    fun changeRow(index: Int, color: Color) {
+        val temp = pixels.value.clone()
+
+        temp.forEach { column ->
+            column[index].color = color
+        }
+
+        pixels.value = temp
+    }}
 
 data class Pixel(
     var color: Color,
