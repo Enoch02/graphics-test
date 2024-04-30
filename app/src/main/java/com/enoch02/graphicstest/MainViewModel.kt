@@ -1,5 +1,6 @@
 package com.enoch02.graphicstest
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -86,6 +87,18 @@ class MainViewModel : ViewModel() {
         pixels.value = temp
     }
 
+    fun clearCanvas() {
+        val temp = pixels.value.clone()
+
+        temp.forEach { row ->
+            row.forEach { pixel ->
+                pixel.color = Color.White
+            }
+        }
+
+        pixels.value = temp
+    }
+
     fun clearRowByRow() {
 
     }
@@ -93,39 +106,58 @@ class MainViewModel : ViewModel() {
     fun movePixel(direction: Direction) {
         val temp = pixels.value.clone()
 
-        if (currentPosition.value.x < pixels.value.size && currentPosition.value.y < pixels.value.first().size) {
-            when (direction) {
-                Direction.LEFT -> {
+        /*if (currentPosition.value.x < pixels.value.size && currentPosition.value.y < pixels.value.first().size) {*/
+        when (direction) {
+            Direction.LEFT -> {
+                /* decrement x */
+                try {
+                    if (currentPosition.value.x >= 0) {  // TODO: not working properly find a solution😕
+                        val currentPixel = temp[currentPosition.value.x][currentPosition.value.y]
 
-                }
+                        // exchange
+                        temp[currentPosition.value.x][currentPosition.value.y] =
+                            temp[currentPosition.value.x - 1][currentPosition.value.y]
+                        temp[currentPosition.value.x - 1][currentPosition.value.y] = currentPixel
 
-                Direction.RIGHT -> {
-                    // increment x to move the pixel to the right
-                    val currentPositionPixel =
-                        temp[currentPosition.value.x][currentPosition.value.y]
-                    currentPosition.value.x += 1
-                    val nextPositionPixel =
-                        temp[currentPosition.value.x + 1][currentPosition.value.y]
-
-                    nextPositionPixel.color = currentPositionPixel.color
-                    currentPositionPixel.color = Color.White
-
-                    /*temp[currentPosition.first + 1][currentPosition.second].color = currentPositionPixel.color
-                    temp[currentPosition.first][currentPosition.second].color = Color.White*/
-                }
-
-                Direction.UP -> {
-
-                }
-
-                Direction.DOWN -> {
+                        currentPosition.value =
+                            currentPosition.value.copy(x = currentPosition.value.x - 1)
+                    }
+                } catch (_: Exception) {
 
                 }
             }
 
-            pixels.value = temp
+            Direction.RIGHT -> {
+                /* increment x */
+                try {
+                    if (currentPosition.value.x < pixels.value.size) {
+                        val currentPixel = temp[currentPosition.value.x][currentPosition.value.y]
+
+                        // exchange
+                        temp[currentPosition.value.x][currentPosition.value.y] =
+                            temp[currentPosition.value.x + 1][currentPosition.value.y]
+                        temp[currentPosition.value.x + 1][currentPosition.value.y] = currentPixel
+
+                        currentPosition.value =
+                            currentPosition.value.copy(x = currentPosition.value.x + 1)
+                    }
+                } catch (_: Exception) {
+
+                }
+            }
+
+            Direction.UP -> {
+
+            }
+
+            Direction.DOWN -> {
+
+            }
         }
+
+        pixels.value = temp
     }
+    //}
 }
 
 data class Pixel(

@@ -215,6 +215,13 @@ fun MyCanvasWithViewModel(viewModel: MainViewModel = viewModel()) {
                             Text(text = "Change Random Row")
                         }
                     )
+
+                    Button(
+                        onClick = { viewModel.clearCanvas() },
+                        content = {
+                            Text(text = "Clear Canvas")
+                        }
+                    )
                 }
 
 
@@ -227,6 +234,8 @@ fun MyCanvasWithViewModel(viewModel: MainViewModel = viewModel()) {
 
                         if (showDpad) {
                             viewModel.clearCanvasForMoveDemo()
+                        } else {
+                            viewModel.shuffleColors()
                         }
                     },
                     content = {
@@ -238,41 +247,47 @@ fun MyCanvasWithViewModel(viewModel: MainViewModel = viewModel()) {
                     visible = showDpad,
                     content = {
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                            content = {
-                                Button(
-                                    onClick = { /*TODO*/ },
-                                    content = {
-                                        Text(text = "Left")
-                                    }
-                                )
+                        Column {
+                            Text(text = "Coordinate -> X: ${viewModel.currentPosition.value.x} Y: ${viewModel.currentPosition.value.y}")
 
-                                Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                                content = {
+                                    //TODO: implement onHold
                                     Button(
-                                        onClick = { /*TODO*/ },
+                                        onClick = { viewModel.movePixel(Direction.LEFT) },
                                         content = {
-                                            Text(text = "Uppp")
+                                            Text(text = "Left")
                                         }
                                     )
+
+                                    Column {
+                                        Button(
+                                            onClick = { viewModel.movePixel(Direction.UP) },
+                                            content = {
+                                                Text(text = "Uppp")
+                                            }
+                                        )
+
+                                        Button(
+                                            onClick = { viewModel.movePixel(Direction.DOWN) },
+                                            content = {
+                                                Text(text = "Down")
+                                            }
+                                        )
+                                    }
+
                                     Button(
-                                        onClick = { /*TODO*/ },
+                                        onClick = { viewModel.movePixel(direction = Direction.RIGHT) },
                                         content = {
-                                            Text(text = "Down")
+                                            Text(text = "Right")
                                         }
                                     )
                                 }
-
-                                Button(
-                                    onClick = { viewModel.movePixel(direction = Direction.RIGHT) },
-                                    content = {
-                                        Text(text = "Right")
-                                    }
-                                )
-                            }
-                        )
+                            )
+                        }
                     }
                 )
             }
