@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -89,6 +90,12 @@ fun MyCanvasWithViewModel(viewModel: MainViewModel = viewModel()) {
     var initAgain by rememberSaveable {
         mutableStateOf(true)
     }
+    var showOtherDemos by rememberSaveable {
+        mutableStateOf(true)
+    }
+    var showDpad by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Column(modifier = Modifier.fillMaxSize(), content = {
         Canvas(modifier = Modifier
@@ -135,76 +142,137 @@ fun MyCanvasWithViewModel(viewModel: MainViewModel = viewModel()) {
                 }
                 val context = LocalContext.current
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    content = {
-                        OutlinedTextField(
-                            value = xCoord,
-                            onValueChange = { xCoord = it },
-                            label = {
-                                Text(text = "X")
-                            },
-                            modifier = Modifier.weight(0.5f)
-                        )
+                if (showOtherDemos) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        content = {
+                            OutlinedTextField(
+                                value = xCoord,
+                                onValueChange = { xCoord = it },
+                                label = {
+                                    Text(text = "X")
+                                },
+                                modifier = Modifier.weight(0.5f)
+                            )
 
-                        OutlinedTextField(
-                            value = yCoord,
-                            onValueChange = { yCoord = it },
-                            label = {
-                                Text(text = "Y")
-                            },
-                            modifier = Modifier.weight(0.5f)
-                        )
-                    }
-                )
+                            OutlinedTextField(
+                                value = yCoord,
+                                onValueChange = { yCoord = it },
+                                label = {
+                                    Text(text = "Y")
+                                },
+                                modifier = Modifier.weight(0.5f)
+                            )
+                        }
+                    )
+
+                    Button(
+                        onClick = {
+                            try {
+                                val x = xCoord.toInt()
+                                val y = yCoord.toInt()
+
+                                if (x <= viewModel.pixels.value.size && y <= viewModel.pixels.value.first().size) {
+                                    viewModel.changePixel(x, y, Color(0xFFEFB8C8))
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        content = {
+                            Text(text = "Change Coord")
+                        }
+                    )
+
+                    Button(
+                        onClick = { viewModel.shuffleColors() },
+                        content = {
+                            Text(text = "Shuffle Colors")
+                        }
+                    )
+
+                    Button(
+                        onClick = {
+                            val index = Random.nextInt(viewModel.pixels.value.size)
+
+                            viewModel.changeColumn(index, Color.White)
+                        },
+                        content = {
+                            Text(text = "Change Random Column")
+                        }
+                    )
+
+                    Button(
+                        onClick = {
+                            val index = Random.nextInt(viewModel.pixels.value.first().size)
+
+                            viewModel.changeRow(index, Color.DarkGray)
+                        },
+                        content = {
+                            Text(text = "Change Random Row")
+                        }
+                    )
+                }
+
 
                 Button(
                     onClick = {
-                        try {
-                            val x = xCoord.toInt()
-                            val y = yCoord.toInt()
+                        /*TODO: hide other buttons and show some button that can be
+                        *  used to move in the 4 axes. Implement their combinations after that*/
+                        showOtherDemos = !showOtherDemos
+                        showDpad = !showDpad
 
-                            if (x <= viewModel.pixels.value.size && y <= viewModel.pixels.value.first().size) {
-                                viewModel.changePixel(x, y, Color(0xFFEFB8C8))
-                            }
-                        } catch (e: Exception) {
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                        if (showDpad) {
+                            viewModel.clearCanvasForMoveDemo()
                         }
                     },
                     content = {
-                        Text(text = "Change Coord")
+                        Text(text = "Move Pixel Demo")
                     }
                 )
 
-                Button(
-                    onClick = { viewModel.shuffleColors() },
+                AnimatedVisibility(
+                    visible = showDpad,
                     content = {
-                        Text(text = "Shuffle Colors")
-                    }
-                )
 
-                Button(
-                    onClick = {
-                        val index = Random.nextInt(viewModel.pixels.value.size)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                Button(
+                                    onClick = { /*TODO*/ },
+                                    content = {
+                                        Text(text = "Left")
+                                    }
+                                )
 
-                        viewModel.changeColumn(index, Color.White)
-                    },
-                    content = {
-                        Text(text = "Change Random Column")
-                    }
-                )
+                                Column {
+                                    Button(
+                                        onClick = { /*TODO*/ },
+                                        content = {
+                                            Text(text = "Uppp")
+                                        }
+                                    )
+                                    Button(
+                                        onClick = { /*TODO*/ },
+                                        content = {
+                                            Text(text = "Down")
+                                        }
+                                    )
+                                }
 
-                Button(
-                    onClick = {
-                        val index = Random.nextInt(viewModel.pixels.value.size)
-
-                        viewModel.changeRow(index, Color.DarkGray)
-                    },
-                    content = {
-                        Text(text = "Change Random Row")
+                                Button(
+                                    onClick = { viewModel.movePixel(direction = Direction.RIGHT) },
+                                    content = {
+                                        Text(text = "Right")
+                                    }
+                                )
+                            }
+                        )
                     }
                 )
             }

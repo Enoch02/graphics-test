@@ -17,6 +17,7 @@ class MainViewModel : ViewModel() {
         Color.Yellow
     )
     val pixels = mutableStateOf<Array<Array<Pixel>>>(emptyArray())
+    val currentPosition = mutableStateOf(Position(0, 0))
 
     fun initPixels(canvasWidth: Float, canvasHeight: Float, pixelWidth: Float, pixelHeight: Float) {
         val rows = (canvasWidth / pixelWidth).toInt()
@@ -68,7 +69,64 @@ class MainViewModel : ViewModel() {
         }
 
         pixels.value = temp
-    }}
+    }
+
+    fun clearCanvasForMoveDemo() {
+        val temp = pixels.value
+
+        temp.forEach { row ->
+            row.forEach { pixel ->
+                pixel.color = Color.White
+            }
+        }
+
+        // pixel to be moved
+        temp[0][0].color = Color.Black
+
+        pixels.value = temp
+    }
+
+    fun clearRowByRow() {
+
+    }
+
+    fun movePixel(direction: Direction) {
+        val temp = pixels.value.clone()
+
+        if (currentPosition.value.x < pixels.value.size && currentPosition.value.y < pixels.value.first().size) {
+            when (direction) {
+                Direction.LEFT -> {
+
+                }
+
+                Direction.RIGHT -> {
+                    // increment x to move the pixel to the right
+                    val currentPositionPixel =
+                        temp[currentPosition.value.x][currentPosition.value.y]
+                    currentPosition.value.x += 1
+                    val nextPositionPixel =
+                        temp[currentPosition.value.x + 1][currentPosition.value.y]
+
+                    nextPositionPixel.color = currentPositionPixel.color
+                    currentPositionPixel.color = Color.White
+
+                    /*temp[currentPosition.first + 1][currentPosition.second].color = currentPositionPixel.color
+                    temp[currentPosition.first][currentPosition.second].color = Color.White*/
+                }
+
+                Direction.UP -> {
+
+                }
+
+                Direction.DOWN -> {
+
+                }
+            }
+
+            pixels.value = temp
+        }
+    }
+}
 
 data class Pixel(
     var color: Color,
@@ -76,3 +134,15 @@ data class Pixel(
     val width: Float = 10f,
     val height: Float = 10f
 )
+
+data class Position(
+    var x: Int,
+    var y: Int
+)
+
+enum class Direction {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+}
