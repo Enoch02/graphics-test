@@ -111,7 +111,7 @@ class MainViewModel : ViewModel() {
             Direction.LEFT -> {
                 /* decrement x */
                 try {
-                    if (currentPosition.value.x >= 0) {  // TODO: not working properly find a solution😕
+                    if (currentPosition.value.x >= 0) {  // TODO: not working properly find a solution😕 [all the conditions below]
                         val currentPixel = temp[currentPosition.value.x][currentPosition.value.y]
 
                         // exchange
@@ -147,11 +147,41 @@ class MainViewModel : ViewModel() {
             }
 
             Direction.UP -> {
+                /* decrement y */
+                try {
+                    if (currentPosition.value.y >= 0) {
+                        val currentPixel = temp[currentPosition.value.x][currentPosition.value.y]
 
+                        // exchange
+                        temp[currentPosition.value.x][currentPosition.value.y] =
+                            temp[currentPosition.value.x][currentPosition.value.y - 1]
+                        temp[currentPosition.value.x][currentPosition.value.y - 1] = currentPixel
+
+                        currentPosition.value =
+                            currentPosition.value.copy(y = currentPosition.value.y - 1)
+                    }
+                } catch (_: Exception) {
+
+                }
             }
 
             Direction.DOWN -> {
+                /* increment y */
+                try {
+                    if (currentPosition.value.y >= 0) {
+                        val currentPixel = temp[currentPosition.value.x][currentPosition.value.y]
 
+                        // exchange
+                        temp[currentPosition.value.x][currentPosition.value.y] =
+                            temp[currentPosition.value.x][currentPosition.value.y + 1]
+                        temp[currentPosition.value.x][currentPosition.value.y + 1] = currentPixel
+
+                        currentPosition.value =
+                            currentPosition.value.copy(y = currentPosition.value.y + 1)
+                    }
+                } catch (_: Exception) {
+
+                }
             }
         }
 
